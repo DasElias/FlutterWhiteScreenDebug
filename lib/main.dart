@@ -5,7 +5,6 @@ import 'package:f_logs/model/flog/flog.dart';
 import 'package:f_logs/model/flog/flog_config.dart';
 import 'package:f_logs/model/flog/log_level.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sembast/sembast.dart';
@@ -15,22 +14,21 @@ StackTrace? globStr;
 bool wasException = false;
 
 Future main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  setupLogging();
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(MyApp());
-}
+    await dotenv.load(fileName: ".env");
+    setupLogging();
+    await setupSSL();
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      home: MyHomePage(),
-    );
+    runApp(MyHomePage());
+
+  } catch(e) {
+    wasException = true;
   }
+
 }
+
 
 void setupLogging() {
   LogsConfig logsConfig = FLog.getDefaultConfigurations();
@@ -49,6 +47,35 @@ void setupLogging() {
   ]);
 }
 
+Future<SecurityContext> setupSSL() async {
+  ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
+
+  SecurityContext securityContext = SecurityContext.defaultContext;
+  try {
+    securityContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
+  } on TlsException catch (e, st) {
+    if (e.osError?.message != null &&
+        e.osError?.message.contains('CERT_ALREADY_IN_HASH_TABLE') == true) {
+      FLog.logThis(
+          text: 'createHttpClient() - cert already trusted! Skipping.',
+          type: LogLevel.WARNING,
+          exception: e,
+          stacktrace: st
+      );
+    } else {
+      FLog.logThis(
+          text: 'createHttpClient() - exception',
+          type: LogLevel.ERROR,
+          exception: e,
+          stacktrace: st
+      );
+    }
+  }
+
+  return securityContext;
+
+}
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key}) : super(key: key);
 
@@ -62,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    SchedulerBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
       try {
         await dialog("here we are " + ( wasException ? "except" : "false"));
 
@@ -88,8 +115,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Text("Hello World!"),
+    return MaterialApp(
+      title: "Demo App",
+      home: Scaffold(
+        body: Text("Hello World!"),
+      ),
     );
   }
 }
