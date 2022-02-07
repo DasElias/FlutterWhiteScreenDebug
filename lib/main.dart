@@ -10,11 +10,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sembast/sembast.dart';
 
+Object? globE;
+StackTrace? globStr;
+
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setPreferredOrientations();
   await dotenv.load(fileName: ".env");
-//  setupLogging();
+  try {
+    setupLogging();
+  } catch(e, str) {
+    globE = e;
+    globStr = str;
+  }
  // await setupSSL();
 
   runApp(MyApp());
@@ -134,22 +142,28 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
+    SchedulerBinding.instance!.addPostFrameCallback((_) async {
       try {
+        await dialog("here we are");
+
+        await dialog(globE ?? "");
+        await dialog(globStr ?? "");
         setupLogging();
       } catch(e, str) {
-        print(e);
-        showDialog(context: context, builder: (context) {
-          return Text(
-            e.toString()
-          );
-        });
-        showDialog(context: context, builder: (context) {
-          return Text(
-              str.toString()
-          );
-        });
+        await dialog(e);
+        await dialog(str);
       }
+    });
+  }
+
+  Future dialog(Object content) async {
+    await showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        title: Text("Meldung"),
+        content: Text(
+            content.toString()
+        ),
+      );
     });
   }
 
