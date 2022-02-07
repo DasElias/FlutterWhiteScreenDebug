@@ -15,7 +15,6 @@ StackTrace? globStr;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await setPreferredOrientations();
   await dotenv.load(fileName: ".env");
   try {
     setupLogging();
