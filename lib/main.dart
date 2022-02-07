@@ -118,7 +118,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return MaterialApp(
       title: "Demo App",
       home: Scaffold(
-        body: Text("Hello World!"),
+        body: Container(
+          color: Colors.redAccent,
+          child: Text("Hello World!"),
+        ),
       ),
     );
   }
