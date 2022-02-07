@@ -5,6 +5,7 @@ import 'package:f_logs/model/flog/flog.dart';
 import 'package:f_logs/model/flog/flog_config.dart';
 import 'package:f_logs/model/flog/log_level.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sembast/sembast.dart';
@@ -126,6 +127,24 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
+      try {
+        setupLogging();
+      } catch(e) {
+        print(e);
+        showDialog(context: context, builder: (context) {
+          return Text(
+            e.toString()
+          );
+        });
+      }
     });
   }
 
