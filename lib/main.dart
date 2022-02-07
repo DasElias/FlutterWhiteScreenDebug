@@ -13,7 +13,7 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setPreferredOrientations();
 //  await dotenv.load(fileName: ".env");
-  setupLogging();
+//  setupLogging();
  // await setupSSL();
 
   runApp(MyApp());
