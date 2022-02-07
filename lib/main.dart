@@ -16,17 +16,10 @@ bool wasException = false;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  try {
-    await setPreferredOrientations();
-    await dotenv.load(fileName: ".env");
-    setupLogging();
-    await setupSSL();
-  } catch(e, str) {
-    wasException = true;
-    globE = e;
-    globStr = str;
-  }
+  await setPreferredOrientations();
+//  await dotenv.load(fileName: ".env");
+  setupLogging();
+ // await setupSSL();
 
   runApp(MyApp());
 }
