@@ -118,10 +118,16 @@ class _MyHomePageState extends State<MyHomePage> {
     return MaterialApp(
       title: "Demo App",
       home: Scaffold(
-        body: Container(
-          color: Colors.redAccent,
-          child: Text("Hello World!"),
-        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              color: Colors.redAccent,
+              child: Text("Hello World!"),
+            ),
+          ],
+        )
       ),
     );
   }
