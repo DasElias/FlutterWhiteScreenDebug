@@ -13,7 +13,7 @@ import 'package:sembast/sembast.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setPreferredOrientations();
-//  await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: ".env");
 //  setupLogging();
  // await setupSSL();
 
@@ -137,11 +137,16 @@ class _MyHomePageState extends State<MyHomePage> {
     SchedulerBinding.instance!.addPostFrameCallback((_) {
       try {
         setupLogging();
-      } catch(e) {
+      } catch(e, str) {
         print(e);
         showDialog(context: context, builder: (context) {
           return Text(
             e.toString()
+          );
+        });
+        showDialog(context: context, builder: (context) {
+          return Text(
+              str.toString()
           );
         });
       }
