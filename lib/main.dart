@@ -12,14 +12,18 @@ import 'package:sembast/sembast.dart';
 
 Object? globE;
 StackTrace? globStr;
+bool wasException = false;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+
   try {
+    await setPreferredOrientations();
+    await dotenv.load(fileName: ".env");
     setupLogging();
     await setupSSL();
   } catch(e, str) {
+    wasException = true;
     globE = e;
     globStr = str;
   }
@@ -143,11 +147,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     SchedulerBinding.instance!.addPostFrameCallback((_) async {
       try {
-        await dialog("here we are");
+        await dialog("here we are " + ( wasException ? "except" : "false"));
 
         await dialog(globE ?? "");
         await dialog(globStr ?? "");
-     //   setupLogging();
       } catch(e, str) {
         await dialog(e);
         await dialog(str);
