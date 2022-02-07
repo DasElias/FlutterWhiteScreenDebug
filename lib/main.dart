@@ -12,9 +12,9 @@ import 'package:sembast/sembast.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setPreferredOrientations();
-  await dotenv.load(fileName: ".env");
+//  await dotenv.load(fileName: ".env");
   setupLogging();
-  await setupSSL();
+ // await setupSSL();
 
   runApp(MyApp());
 }
