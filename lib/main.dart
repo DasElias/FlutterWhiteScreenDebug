@@ -19,11 +19,11 @@ Future main() async {
   await dotenv.load(fileName: ".env");
   try {
     setupLogging();
+    await setupSSL();
   } catch(e, str) {
     globE = e;
     globStr = str;
   }
- // await setupSSL();
 
   runApp(MyApp());
 }
@@ -148,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
         await dialog(globE ?? "");
         await dialog(globStr ?? "");
-        setupLogging();
+     //   setupLogging();
       } catch(e, str) {
         await dialog(e);
         await dialog(str);
